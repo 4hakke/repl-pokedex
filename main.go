@@ -7,19 +7,24 @@ import (
 )
 
 type cliCommand struct {
-	action func() error
-	name   string
+	action      func() error
+	name        string
+	description string
 }
 
+var commands map[string]cliCommand
+
 func main() {
-	commands := map[string]cliCommand{
+	commands = map[string]cliCommand{
 		"help": {
-			name:   "help",
-			action: helpCommand,
+			name:        "help",
+			description: "Displays a help message",
+			action:      helpCommand,
 		},
 		"exit": {
-			name:   "exit",
-			action: exitCommand,
+			name:        "exit",
+			description: "Exit the Pokedex",
+			action:      exitCommand,
 		},
 	}
 
@@ -35,9 +40,6 @@ func main() {
 		enteredCommand := scanner.Text()
 		command := commands[enteredCommand]
 
-		fmt.Println(enteredCommand)
-		fmt.Println(command.name)
-
 		if command.name != enteredCommand {
 			continue
 		}
@@ -47,6 +49,12 @@ func main() {
 }
 
 func helpCommand() error {
+	fmt.Println("")
+	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("Usage:")
+	fmt.Printf("%s: %s\n", commands["help"].name, commands["help"].description)
+	fmt.Printf("%s: %s\n", commands["exit"].name, commands["exit"].description)
+	fmt.Println("")
 	return nil
 }
 
