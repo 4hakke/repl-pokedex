@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 )
@@ -13,7 +14,7 @@ type cliCommand struct {
 func main() {
 	commands := map[string]cliCommand{
 		"help": {
-			name:   "name",
+			name:   "help",
 			action: helpCommand,
 		},
 		"exit": {
@@ -22,7 +23,27 @@ func main() {
 		},
 	}
 
-	fmt.Println("Hello world")
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Print("Pokedex > ")
+		scanSuccess := scanner.Scan()
+
+		if !scanSuccess {
+			return
+		}
+		enteredCommand := scanner.Text()
+		command := commands[enteredCommand]
+
+		fmt.Println(enteredCommand)
+		fmt.Println(command.name)
+
+		if command.name != enteredCommand {
+			continue
+		}
+
+		command.action()
+	}
 }
 
 func helpCommand() error {
