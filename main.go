@@ -67,9 +67,12 @@ func main() {
 func helpCommand() error {
 	fmt.Println("")
 	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("")
 	fmt.Println("Usage:")
 	fmt.Printf("%s: %s\n", commands["help"].name, commands["help"].description)
 	fmt.Printf("%s: %s\n", commands["exit"].name, commands["exit"].description)
+	fmt.Printf("%s: %s\n", commands["map"].name, commands["map"].description)
+	fmt.Printf("%s: %s\n", commands["mapb"].name, commands["mapb"].description)
 	fmt.Println("")
 	return nil
 }
