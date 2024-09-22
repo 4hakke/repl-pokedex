@@ -14,7 +14,10 @@ type cliCommand struct {
 	description string
 }
 
-var commands map[string]cliCommand
+var (
+	commands          map[string]cliCommand
+	locationsIterator pokeapi.LocationsIterator
+)
 
 func main() {
 	commands = map[string]cliCommand{
@@ -30,10 +33,16 @@ func main() {
 		},
 		"map": {
 			name:        "map",
-			description: "iterate through location",
+			description: "Iterate through list of locations",
 			action:      mapCommand,
 		},
+		"mapb": {
+			name:        "mapb",
+			description: "Iterate through list of locations (backwards)",
+			action:      mapBCommand,
+		},
 	}
+	locationsIterator = pokeapi.LocationsIterator{Limit: 20}
 
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -71,7 +80,18 @@ func exitCommand() error {
 }
 
 func mapCommand() error {
-	locations, err := pokeapi.Locations(0, 20)
+	locations, err := locationsIterator.Next()
+	if err != nil {
+		return err
+	}
+	for _, location := range locations {
+		fmt.Println(location.Name)
+	}
+	return nil
+}
+
+func mapBCommand() error {
+	locations, err := locationsIterator.Previous()
 	if err != nil {
 		return err
 	}
