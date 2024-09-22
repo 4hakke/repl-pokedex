@@ -85,6 +85,7 @@ func exitCommand() error {
 func mapCommand() error {
 	locations, err := locationsIterator.Next()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	for _, location := range locations {
@@ -96,6 +97,7 @@ func mapCommand() error {
 func mapBCommand() error {
 	locations, err := locationsIterator.Previous()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	for _, location := range locations {

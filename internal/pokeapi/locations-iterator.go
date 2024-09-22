@@ -1,5 +1,7 @@
 package pokeapi
 
+import "fmt"
+
 type LocationsIterator struct {
 	Limit  int
 	offset int
@@ -8,7 +10,7 @@ type LocationsIterator struct {
 
 func (li *LocationsIterator) Next() ([]Location, error) {
 	if li.count != nil && li.offset >= *li.count {
-		return []Location{}, nil
+		return []Location{}, fmt.Errorf("You reached the end of the locations list")
 	}
 	res, err := locations(li.offset, li.Limit)
 	if err != nil {
@@ -21,7 +23,7 @@ func (li *LocationsIterator) Next() ([]Location, error) {
 
 func (li *LocationsIterator) Previous() ([]Location, error) {
 	if li.offset-li.Limit*2 < 0 {
-		return []Location{}, nil
+		return []Location{}, fmt.Errorf("You are in the beginning of the locations list")
 	}
 	li.offset -= li.Limit * 2
 	res, err := locations(li.offset, li.Limit)
