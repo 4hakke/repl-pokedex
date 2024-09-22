@@ -20,14 +20,15 @@ func (li *LocationsIterator) Next() ([]Location, error) {
 }
 
 func (li *LocationsIterator) Previous() ([]Location, error) {
-	if li.offset-li.Limit < 0 {
+	if li.offset-li.Limit*2 < 0 {
 		return []Location{}, nil
 	}
-	li.offset -= li.Limit
+	li.offset -= li.Limit * 2
 	res, err := locations(li.offset, li.Limit)
 	if err != nil {
 		return []Location{}, err
 	}
 	li.count = &res.Count
+	li.offset += li.Limit
 	return res.Results, nil
 }
