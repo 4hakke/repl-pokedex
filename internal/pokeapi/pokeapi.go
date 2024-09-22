@@ -2,6 +2,7 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -15,10 +16,11 @@ type Location struct {
 	Name string `json:"name"`
 }
 
-func Locations(offset, limit int) ([]Location, error) {
-	response, err := http.Get("https://pokeapi.co/api/v2/location/")
+func locations(offset, limit int) (LocationsResult, error) {
+	fullUrl := fmt.Sprintf("https://pokeapi.co/api/v2/location/?offset=%d&limit=%d", offset, limit)
+	response, err := http.Get(fullUrl)
 	if err != nil {
-		return []Location{}, err
+		return LocationsResult{}, err
 	}
 
 	defer response.Body.Close()
@@ -26,13 +28,13 @@ func Locations(offset, limit int) ([]Location, error) {
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return []Location{}, err
+		return LocationsResult{}, err
 	}
 
 	err = json.Unmarshal(body, &locationsResult)
 	if err != nil {
-		return []Location{}, err
+		return LocationsResult{}, err
 	}
 
-	return locationsResult.Results, nil
+	return locationsResult, nil
 }
