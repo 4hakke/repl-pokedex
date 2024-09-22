@@ -2,7 +2,6 @@ package pokeapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
@@ -34,8 +33,6 @@ func Locations(offset, limit int) ([]Location, error) {
 	if err != nil {
 		return []Location{}, err
 	}
-
-	fmt.Printf("%v", locationsResult.Results)
 
 	return locationsResult.Results, nil
 }

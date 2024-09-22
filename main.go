@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/4hakke/repl-pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -25,6 +27,11 @@ func main() {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			action:      exitCommand,
+		},
+		"map": {
+			name:        "map",
+			description: "iterate through location",
+			action:      mapCommand,
 		},
 	}
 
@@ -60,5 +67,16 @@ func helpCommand() error {
 
 func exitCommand() error {
 	os.Exit(0)
+	return nil
+}
+
+func mapCommand() error {
+	locations, err := pokeapi.Locations(0, 20)
+	if err != nil {
+		return err
+	}
+	for _, location := range locations {
+		fmt.Println(location.Name)
+	}
 	return nil
 }
