@@ -1,7 +1,6 @@
 package pokecache
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -41,7 +40,6 @@ func (cache *Cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	go func() {
 		for t := range ticker.C {
-			fmt.Printf("Reseting the cache %v", t)
 			cache.flushOutdatedEntries(interval, t)
 		}
 	}()

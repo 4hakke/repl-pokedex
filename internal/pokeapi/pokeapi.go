@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
+
+	"github.com/4hakke/repl-pokedex/internal/pokecache"
 )
 
 type LocationsResult struct {
@@ -16,22 +19,37 @@ type Location struct {
 	Name string `json:"name"`
 }
 
+var cache = pokecache.NewCache(20 * time.Second)
+
+// TODO: Refactor
 func locations(offset, limit int) (LocationsResult, error) {
 	fullUrl := fmt.Sprintf("https://pokeapi.co/api/v2/location/?offset=%d&limit=%d", offset, limit)
+	cachedResult, ok := cache.Get(fullUrl)
+	if ok {
+		return parseLocations(cachedResult)
+	}
+
 	response, err := http.Get(fullUrl)
 	if err != nil {
 		return LocationsResult{}, err
 	}
 
 	defer response.Body.Close()
-	locationsResult := LocationsResult{}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return LocationsResult{}, err
 	}
+	result, err := parseLocations(body)
+	if err == nil {
+		cache.Add(fullUrl, body)
+	}
+	return result, err
+}
 
-	err = json.Unmarshal(body, &locationsResult)
+func parseLocations(payload []byte) (LocationsResult, error) {
+	locationsResult := LocationsResult{}
+	err := json.Unmarshal(payload, &locationsResult)
 	if err != nil {
 		return LocationsResult{}, err
 	}
