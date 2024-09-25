@@ -19,6 +19,17 @@ type Location struct {
 	Name string `json:"name"`
 }
 
+type LocationArea struct {
+	Name              string `json:"name"`
+	PokemonEncounters []struct {
+		Pokemon []Pokemon `json:"pokemon"`
+	} `json:"pokemon_encounters"`
+}
+
+type Pokemon struct {
+	Name string `json:"name"`
+}
+
 var cache = pokecache.NewCache(20 * time.Second)
 
 // TODO: Refactor
@@ -45,6 +56,10 @@ func locations(offset, limit int) (LocationsResult, error) {
 		cache.Add(fullUrl, body)
 	}
 	return result, err
+}
+
+func getLocationArea(name string) (LocationArea, error) {
+	return LocationArea{}, nil
 }
 
 func parseLocations(payload []byte) (LocationsResult, error) {
