@@ -58,8 +58,29 @@ func locations(offset, limit int) (LocationsResult, error) {
 	return result, err
 }
 
-func getLocationArea(name string) (LocationArea, error) {
-	return LocationArea{}, nil
+func GetLocationArea(name string) (LocationArea, error) {
+	fullUrl := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/%s", name)
+	cachedResult, ok := cache.Get(fullUrl)
+	if ok {
+		return parseLocationArea(cachedResult)
+	}
+
+	response, err := http.Get(fullUrl)
+	if err != nil {
+		return LocationArea{}, err
+	}
+
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return LocationArea{}, err
+	}
+	result, err := parseLocationArea(body)
+	if err == nil {
+		cache.Add(fullUrl, body)
+	}
+	return result, err
 }
 
 func parseLocations(payload []byte) (LocationsResult, error) {
@@ -70,4 +91,14 @@ func parseLocations(payload []byte) (LocationsResult, error) {
 	}
 
 	return locationsResult, nil
+}
+
+func parseLocationArea(payload []byte) (LocationArea, error) {
+	locationArea := LocationArea{}
+	err := json.Unmarshal(payload, &locationArea)
+	if err != nil {
+		return LocationArea{}, err
+	}
+
+	return locationArea, nil
 }
