@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/4hakke/repl-pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
-	action      func() error
+	action      func(params []string) error
 	name        string
 	description string
 }
@@ -41,6 +42,11 @@ func main() {
 			description: "Iterate through list of locations (backwards)",
 			action:      mapBCommand,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Explore the pokemons on an area",
+			action:      exploreCommand,
+		},
 	}
 	locationsIterator = pokeapi.LocationsIterator{Limit: 20}
 
@@ -53,18 +59,21 @@ func main() {
 		if !scanSuccess {
 			return
 		}
-		enteredCommand := scanner.Text()
-		command := commands[enteredCommand]
+		enteredCommand := strings.Split(scanner.Text(), " ")
+		command := commands[enteredCommand[0]]
 
-		if command.name != enteredCommand {
+		if command.name != enteredCommand[0] {
 			continue
 		}
-
-		command.action()
+		if len(enteredCommand) > 1 {
+			command.action(enteredCommand[1:])
+		} else {
+			command.action(make([]string, 0))
+		}
 	}
 }
 
-func helpCommand() error {
+func helpCommand(params []string) error {
 	fmt.Println("")
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("")
@@ -77,12 +86,12 @@ func helpCommand() error {
 	return nil
 }
 
-func exitCommand() error {
+func exitCommand(params []string) error {
 	os.Exit(0)
 	return nil
 }
 
-func mapCommand() error {
+func mapCommand(params []string) error {
 	locations, err := locationsIterator.Next()
 	if err != nil {
 		fmt.Println(err)
@@ -94,7 +103,7 @@ func mapCommand() error {
 	return nil
 }
 
-func mapBCommand() error {
+func mapBCommand(params []string) error {
 	locations, err := locationsIterator.Previous()
 	if err != nil {
 		fmt.Println(err)
@@ -102,6 +111,24 @@ func mapBCommand() error {
 	}
 	for _, location := range locations {
 		fmt.Println(location.Name)
+	}
+	return nil
+}
+
+func exploreCommand(params []string) error {
+	if len(params) == 0 {
+		fmt.Println("Please enter an area to explore as a parameter")
+	}
+	area := params[0]
+	fmt.Printf("Exploring %s...\n", area)
+
+	locationArea, err := pokeapi.GetLocationArea(area)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, encounters := range locationArea.PokemonEncounters {
+		fmt.Printf("- %s\n", encounters.Pokemon.Name)
 	}
 	return nil
 }
