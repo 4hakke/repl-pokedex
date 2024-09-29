@@ -82,6 +82,7 @@ func helpCommand(params []string) error {
 	fmt.Printf("%s: %s\n", commands["exit"].name, commands["exit"].description)
 	fmt.Printf("%s: %s\n", commands["map"].name, commands["map"].description)
 	fmt.Printf("%s: %s\n", commands["mapb"].name, commands["mapb"].description)
+	fmt.Printf("%s: %s\n", commands["explore"].name, commands["explore"].description)
 	fmt.Println("")
 	return nil
 }
