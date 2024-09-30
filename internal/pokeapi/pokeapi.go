@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/4hakke/repl-pokedex/internal/pokecache"
+	"github.com/4hakke/repl-pokedex/internal/cache"
 )
 
 type LocationsResult struct {
@@ -30,7 +30,7 @@ type Pokemon struct {
 	Name string `json:"name"`
 }
 
-var cache = pokecache.NewCache(20 * time.Second)
+var cache = cache.NewCache(20 * time.Second)
 
 // TODO: Refactor
 func locations(offset, limit int) (LocationsResult, error) {
@@ -56,6 +56,40 @@ func locations(offset, limit int) (LocationsResult, error) {
 		cache.Add(fullUrl, body)
 	}
 	return result, err
+}
+
+func get(url string, resultObject *any) error {
+	cachedResult, ok := cache.Get(url)
+	if ok {
+		return parse(cachedResult, resultObject)
+	}
+
+	response, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	err = parse(body, resultObject)
+	if err == nil {
+		cache.Add(url, body)
+	}
+	return err
+}
+
+func parse(payload []byte, result *any) error {
+	err := json.Unmarshal(payload, &result)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func GetLocationArea(name string) (LocationArea, error) {
