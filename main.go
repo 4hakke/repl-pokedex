@@ -44,7 +44,7 @@ func main() {
 		},
 		"explore": {
 			name:        "explore",
-			description: "Explore the pokemons on an area",
+			description: "Explore the pokemons in specific area",
 			action:      exploreCommand,
 		},
 	}
