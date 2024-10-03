@@ -1,6 +1,6 @@
-package pokedex
+package model
 
-type LocationsResult struct {
+type LocationsResultDto struct {
 	Results []Location `json:"results"`
 	Count   int        `json:"count"`
 }

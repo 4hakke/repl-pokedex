@@ -1,4 +1,4 @@
-package pokedex
+package model
 
 type LocationArea struct {
 	Name              string `json:"name"`
