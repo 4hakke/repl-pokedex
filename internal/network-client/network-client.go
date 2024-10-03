@@ -9,13 +9,13 @@ import (
 )
 
 type NetworkClient struct {
-	cache cache.Cache
+	cache *cache.Cache
 }
 
-func (client *NetworkClient) Get(url string, resultedObject *any) error {
+func (client *NetworkClient) Get(url string, resultedObject any) error {
 	cachedResult, ok := client.cache.Get(url)
 	if ok {
-		return parse(cachedResult, resultedObject)
+		return parse(cachedResult, &resultedObject)
 	}
 
 	response, err := http.Get(url)
@@ -29,14 +29,14 @@ func (client *NetworkClient) Get(url string, resultedObject *any) error {
 	if err != nil {
 		return err
 	}
-	err = parse(body, resultedObject)
+	err = parse(body, &resultedObject)
 	if err == nil {
 		client.cache.Add(url, body)
 	}
 	return err
 }
 
-func parse(payload []byte, result *any) error {
+func parse(payload []byte, result any) error {
 	err := json.Unmarshal(payload, &result)
 	if err != nil {
 		return err
