@@ -6,6 +6,10 @@ import (
 	"github.com/4hakke/repl-pokedex/internal/pokedex/model"
 )
 
+func NewProvider(networkClient NetworkClientInterface) *PokedexProvider {
+	return &PokedexProvider{networkClient: networkClient}
+}
+
 type NetworkClientInterface interface {
 	Get(url string, resultedObject any) error
 }

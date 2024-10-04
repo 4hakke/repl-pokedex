@@ -8,6 +8,10 @@ import (
 	"github.com/4hakke/repl-pokedex/internal/cache"
 )
 
+func NewClient(cache *cache.Cache) *NetworkClient {
+	return &NetworkClient{cache: cache}
+}
+
 type NetworkClient struct {
 	cache *cache.Cache
 }
