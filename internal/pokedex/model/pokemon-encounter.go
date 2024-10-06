@@ -1,5 +1,5 @@
 package model
 
-type Pokemon struct {
+type PokemonEncounter struct {
 	Name string `json:"name"`
 }

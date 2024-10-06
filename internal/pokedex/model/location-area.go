@@ -3,6 +3,6 @@ package model
 type LocationArea struct {
 	Name              string `json:"name"`
 	PokemonEncounters []struct {
-		Pokemon Pokemon `json:"pokemon"`
+		Pokemon PokemonEncounter `json:"pokemon"`
 	} `json:"pokemon_encounters"`
 }
