@@ -3,7 +3,9 @@ package pokedex
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"math/rand"
+	"slices"
 
 	"github.com/4hakke/repl-pokedex/internal/pokedex/model"
 )
@@ -94,6 +96,10 @@ func (provider *PokedexProvider) Inspect(pokemonName string) (model.Pokemon, err
 	}
 
 	return pokemon, nil
+}
+
+func (provider *PokedexProvider) CaughtPokemons(pokemonName string) ([]model.Pokemon, error) {
+	return slices.Collect(maps.Values(provider.state.caughtPokemons)), nil
 }
 
 func (provider *PokedexProvider) locations(url string) ([]model.Location, error) {
