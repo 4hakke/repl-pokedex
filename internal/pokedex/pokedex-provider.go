@@ -9,7 +9,7 @@ import (
 )
 
 func NewProvider(networkClient NetworkClientInterface) *PokedexProvider {
-	return &PokedexProvider{networkClient: networkClient, state: &State{}}
+	return &PokedexProvider{networkClient: networkClient, state: &State{caughtPokemons: make(map[string]model.Pokemon)}}
 }
 
 type NetworkClientInterface interface {
@@ -23,6 +23,7 @@ type PokedexProvider struct {
 
 type State struct {
 	locationsResult *model.LocationsResult
+	caughtPokemons  map[string]model.Pokemon
 }
 
 const baseUrl = "https://pokeapi.co/api/v2/"
@@ -64,6 +65,10 @@ func (provider *PokedexProvider) LocationsPrevious() ([]model.Location, error) {
 }
 
 func (provider *PokedexProvider) Catch(pokemonName string) (bool, error) {
+	if _, ok := provider.state.caughtPokemons[pokemonName]; ok {
+		return false, errors.New("You already caught this pokemon")
+	}
+
 	fullUrl := fmt.Sprintf("%s/pokemon/%s", baseUrl, pokemonName)
 	pokemon := model.Pokemon{}
 	err := provider.networkClient.Get(fullUrl, &pokemon)
@@ -72,6 +77,12 @@ func (provider *PokedexProvider) Catch(pokemonName string) (bool, error) {
 	}
 
 	catchChance := rand.Intn(550)
+
+	didCatchPokemon := catchChance > pokemon.BaseExperience
+
+	if didCatchPokemon {
+		provider.state.caughtPokemons[pokemon.Name] = pokemon
+	}
 
 	return catchChance > pokemon.BaseExperience, nil
 }
