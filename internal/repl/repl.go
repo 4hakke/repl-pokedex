@@ -13,6 +13,7 @@ type PokedexProviderInterface interface {
 	GetLocationArea(name string) (model.LocationArea, error)
 	LocationsNext() ([]model.Location, error)
 	LocationsPrevious() ([]model.Location, error)
+	Catch(pokemonName string) (bool, error)
 }
 
 func NewRepl(pokedexProvider PokedexProviderInterface) *Repl {
@@ -41,10 +42,15 @@ func (repl *Repl) Start() {
 			continue
 		}
 
+		var commandErr error
 		if len(enteredCommand) > 1 {
-			command.action(enteredCommand[1:])
+			commandErr = command.action(enteredCommand[1:])
 		} else {
-			command.action(make([]string, 0))
+			commandErr = command.action(make([]string, 0))
+		}
+
+		if commandErr != nil {
+			fmt.Println(commandErr)
 		}
 	}
 }
@@ -75,6 +81,11 @@ func buildCommands(repl *Repl) {
 			name:        "explore",
 			description: "Explore the pokemons in specific area. Area name should be provided as an argument",
 			action:      repl.exploreCommand,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a pokemon. Pokemon name should be provided as an argument",
+			action:      repl.catchCommand,
 		},
 	}
 }
