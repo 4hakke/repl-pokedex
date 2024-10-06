@@ -14,6 +14,7 @@ type PokedexProviderInterface interface {
 	LocationsNext() ([]model.Location, error)
 	LocationsPrevious() ([]model.Location, error)
 	Catch(pokemonName string) (bool, error)
+	Inspect(pokemonName string) (model.Pokemon, error)
 }
 
 func NewRepl(pokedexProvider PokedexProviderInterface) *Repl {
@@ -86,6 +87,11 @@ func buildCommands(repl *Repl) {
 			name:        "catch",
 			description: "Attempt to catch a pokemon. Pokemon name should be provided as an argument",
 			action:      repl.catchCommand,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Check basic information about caught pokemon. Pokemon name should be provided as an argument",
+			action:      repl.inspectCommand,
 		},
 	}
 }
