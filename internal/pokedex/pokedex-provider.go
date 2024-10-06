@@ -87,6 +87,15 @@ func (provider *PokedexProvider) Catch(pokemonName string) (bool, error) {
 	return catchChance > pokemon.BaseExperience, nil
 }
 
+func (provider *PokedexProvider) Inspect(pokemonName string) (model.Pokemon, error) {
+	pokemon, ok := provider.state.caughtPokemons[pokemonName]
+	if !ok {
+		return model.Pokemon{}, errors.New("Hey buddy, you need to catch the pokemon first")
+	}
+
+	return pokemon, nil
+}
+
 func (provider *PokedexProvider) locations(url string) ([]model.Location, error) {
 	locationsResult := model.LocationsResult{}
 	err := provider.networkClient.Get(url, &locationsResult)
