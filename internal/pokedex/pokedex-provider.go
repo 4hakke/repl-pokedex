@@ -3,6 +3,7 @@ package pokedex
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 
 	"github.com/4hakke/repl-pokedex/internal/pokedex/model"
 )
@@ -60,6 +61,19 @@ func (provider *PokedexProvider) LocationsPrevious() ([]model.Location, error) {
 	} else {
 		return []model.Location{}, errors.New("You reached the beginning of the locations list")
 	}
+}
+
+func (provider *PokedexProvider) Catch(pokemonName string) (bool, error) {
+	fullUrl := fmt.Sprintf("%s/pokemon/%s", baseUrl, pokemonName)
+	pokemon := model.Pokemon{}
+	err := provider.networkClient.Get(fullUrl, &pokemon)
+	if err != nil {
+		return false, err
+	}
+
+	catchChance := rand.Intn(550)
+
+	return catchChance > pokemon.BaseExperience, nil
 }
 
 func (provider *PokedexProvider) locations(url string) ([]model.Location, error) {
