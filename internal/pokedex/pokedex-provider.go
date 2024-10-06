@@ -90,7 +90,7 @@ func (provider *PokedexProvider) Catch(pokemonName string) (bool, error) {
 func (provider *PokedexProvider) Inspect(pokemonName string) (model.Pokemon, error) {
 	pokemon, ok := provider.state.caughtPokemons[pokemonName]
 	if !ok {
-		return model.Pokemon{}, errors.New("Hey buddy, you need to catch the pokemon first")
+		return model.Pokemon{}, errors.New("Hold on, you need to catch the pokemon first")
 	}
 
 	return pokemon, nil
