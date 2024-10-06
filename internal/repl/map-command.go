@@ -3,7 +3,7 @@ package repl
 import "fmt"
 
 func (repl *Repl) mapCommand(params []string) error {
-	locations, err := repl.pokedexProvider.Locations(0, 20)
+	locations, err := repl.pokedexProvider.LocationsNext()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -15,7 +15,7 @@ func (repl *Repl) mapCommand(params []string) error {
 }
 
 func (repl *Repl) mapBCommand(params []string) error {
-	locations, err := repl.pokedexProvider.Locations(0, 20)
+	locations, err := repl.pokedexProvider.LocationsPrevious()
 	if err != nil {
 		fmt.Println(err)
 		return err

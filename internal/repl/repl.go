@@ -11,7 +11,8 @@ import (
 
 type PokedexProviderInterface interface {
 	GetLocationArea(name string) (model.LocationArea, error)
-	Locations(offset, limit int) ([]model.Location, error)
+	LocationsNext() ([]model.Location, error)
+	LocationsPrevious() ([]model.Location, error)
 }
 
 func NewRepl(pokedexProvider PokedexProviderInterface) *Repl {
