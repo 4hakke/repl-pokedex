@@ -98,7 +98,7 @@ func (provider *PokedexProvider) Inspect(pokemonName string) (model.Pokemon, err
 	return pokemon, nil
 }
 
-func (provider *PokedexProvider) CaughtPokemons(pokemonName string) ([]model.Pokemon, error) {
+func (provider *PokedexProvider) CaughtPokemons() ([]model.Pokemon, error) {
 	return slices.Collect(maps.Values(provider.state.caughtPokemons)), nil
 }
 
